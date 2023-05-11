@@ -1,0 +1,25 @@
+{
+  "name": "employeetracker-mysql",
+  "version": "1.0.0",
+  "description": "## Description",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shruthisalimath/EmployeeTracker-MYSQL.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shruthisalimath/EmployeeTracker-MYSQL/issues"
+  },
+  "homepage": "https://github.com/shruthisalimath/EmployeeTracker-MYSQL#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "inquirer": "^8.2.4",
+    "mysql": "^2.18.1"
+  }
+}
