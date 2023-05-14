@@ -1,4 +1,4 @@
-# EmployeeTracker-MYSQL
+# Employee Tracker-MYSQL ![GitHub License](https://shields.io/badge/license-ISC-brightgreen)
 
 ## Description
 
@@ -17,9 +17,8 @@
 3. Make sure that your repo includes a package.json with the required dependencies. You can create one by running npm init when you first set up the project, before installing any dependencies.
 4. Run command npm i inquirer@8.2.4 from the integrated terminal to install inquirer.js package dependency.
 5. Run command npm npm i express to install express package.
-6. Run command npm i uuid to install uuid package to generate unique id.
-7. 
-8. 
+6. Run command npm i mysql  to install mysql package.
+
 
 ## Usage 
 
@@ -52,6 +51,6 @@ npm test
 
 
 2. The URL of the GitHub repository.
-https://github.com/shruthisalimath/Note-Register
+
 
 
