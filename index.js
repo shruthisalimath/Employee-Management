@@ -36,7 +36,7 @@ function empPrompts() {
                 "View all Roles",
                 "View all Employees",
                 "Add a Department",
-                "Add a Roll",
+                "Add a Role",
                 "Add an Employee",
                 "Update an Employee Role",
                 "View Employees by Department",
@@ -63,8 +63,8 @@ function empPrompts() {
                 case "Add a Department":
                     addDepartment();
                     break;
-                case "Add a Roles":
-                    addRoles();
+                case "Add a Role":
+                    addRole();
                     break;
                 case "Add an Employee":
                     addEmployee();
@@ -166,20 +166,76 @@ function addDepartment() {
             {
                 name: res.department_name,
             },
-            (err, res) => {
+            (err) => {
                 if (err) throw err;
+            });
                 console.log("Successfully Added New Department!");
                 console.log("");
-                empPrompts();
-            });
+                viewAllDepartments();
         });
 };
 
 // Add New Role
-function addRoles() {
+function addRole() {
     db.query("SELECT * FROM department", (err, res) => {
         if (err) throw err;
-        console.table(res);
-});
-}
+        const pickDepartment = res.map((department) => {
+            return { 
+                value: department.id,
+                name: department.name,
+            };
+        });
+        inquirer.prompt ([
+            {
+                type: "input",
+                message: "Please enter a title for new role",
+                name: "role_title",
+                validate: titleInput => {
+                    if (titleInput) {
+                        return true;
+                    }else {
+                        console.log('please enter role title!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "input",
+                message: "Please enter a salary for role",
+                name: "role_salary",
+                validate: salaryInput => {
+                    if (salaryInput) {
+                        return true;
+                    }else {
+                        console.log('please enter role salary!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "list",
+                message: "please select department for this role",
+                name: "departmentId", 
+                choices: pickDepartment,
+            },
+        ])
+        .then((res) => {
+            db.query("INSERT INTO role SET ?",
+                {
+                    title: res.role_title,
+                    salary: res.role_salary,
+                    department_id: res.departmentId
+                },
+                (err) => {
+                    if (err) throw err;
+                });
+                    console.log("Successfully Added New Role!");
+                    console.log("");
+                    viewAllRoles();
+        });
+    });
+};
+
+//Add Employee
+
     
