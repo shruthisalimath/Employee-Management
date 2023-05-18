@@ -26,7 +26,7 @@ db.connect(err => {
 
 //prompt questions
 function empPrompts() {
-    inquirer.prompt ([
+    inquirer.prompt([
         {
             type: 'list',
             name: `userChoice`,
@@ -51,7 +51,7 @@ function empPrompts() {
         .then((res) => {
             console.log(res.userChoice);
             switch (res.userChoice) {
-                case "View all Departments" :
+                case "View all Departments":
                     viewAllDepartments();
                     break;
                 case "View all Roles":
@@ -60,7 +60,7 @@ function empPrompts() {
                 case "View all Employees":
                     viewAllEmployees();
                     break;
-                case "Add a Departments":
+                case "Add a Department":
                     addDepartment();
                     break;
                 case "Add a Roles":
@@ -146,43 +146,40 @@ function viewAllEmployees() {
 };
 
 //Add a new department
-//function addDepartments() {
-/*  inquirer.prompt (
-      [ 
-          {
-              type: "input",
-              message: "please enter department name: ",
-           name: "department_name",
-           validate: nameInput => {
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "please enter department name: ",
+            name: "department_name"
+            /*validate: nameInput => {
               if (nameInput) {
                   return true;
               }else {
                   console.log('please enter department name!');
                   return false;
               }
-           }
-          }
-      ]).then((res) => {
-          db.addDepartment(res.department_name);
-          console.log("calling empprompts from  add  departments:");
-          empPrompts();
-      });
-//};
-
-//select department to add roles
-function selectDepartment(){
-  const deptName = [];
-  db.query("select * from department;", (err, res) => {
-      if (err) throw err;
-      for(let i = 0; i < res.length; i++)
-      {
-          deptName.push(res[i].name);
-      }
-  });
-  return deptName;
+            }*/
+        },
+    ]).then((res) => {
+        db.query("INSERT INTO department SET ?",
+            {
+                name: res.department_name,
+            },
+            (err, res) => {
+                if (err) throw err;
+                console.log("Successfully Added New Department!");
+                console.log("");
+                empPrompts();
+            });
+        });
 };
 
-//Add Role
+// Add New Role
 function addRoles() {
-  
-}*/
+    db.query("SELECT * FROM department", (err, res) => {
+        if (err) throw err;
+        console.table(res);
+});
+}
+    
