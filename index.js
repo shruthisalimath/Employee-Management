@@ -117,7 +117,7 @@ function viewAllRoles() {
                role.title As job_title,\
                role.salary,\
                d.name As department_name from role\
-               join department as d on role.department_id = d.id;",
+               join department as d on role.department_id = d.id;",         
         (err, res) => {
             if (err) throw err;
             console.table("All Roles: ", res);
@@ -236,6 +236,136 @@ function addRole() {
     });
 };
 
-//Add Employee
+//Add New Employee
+function addEmployee() {
+    db.query("SELECT * FROM role", (err, res) => {
+        if (err) throw err;
+        const pickRole = res.map((role) => {
+            return { 
+                value: role.id,
+                name: role.title,
+            };
+        });
+    db.query("SELECT * FROM employee WHERE manager_id is NULL", (err, res) => {
+        if (err) throw err;
+        const pickManager = res.map((manager) => {
+            return {
+                value: manager.id,
+                name: manager.first_name + " " + manager.last_name,
+            };
+        });
+        pickManager.push({
+            name: "none",
+            value: null
+        });
+        inquirer.prompt ([
+            {
+                type: "input",
+                message: "Please first name of the new employee",
+                name: "firstName",
+                validate: firstInput => {
+                    if (firstInput) {
+                        return true;
+                    }else {
+                        console.log('please enter the First Name!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "input",
+                message: "Please last name of the new employee",
+                name: "lastName",
+                validate: lastInput => {
+                    if (lastInput) {
+                        return true;
+                    }else {
+                        console.log('please enter the Last Name!');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: "list",
+                message: "Please select employee Role",
+                name: "empRole",
+                choices: pickRole,
+            },
+            {
+                type: "list",
+                message: "Please select employee Manager",
+                name: "empManager",
+                choices: pickManager,
+            },
+        ])
+        .then((res) => {
+            db.query("INSERT INTO employee SET ?",
+                {
+                    first_name: res.firstName,
+                    last_name: res.lastName,
+                    role_id: res.empRole,
+                    manager_id: res.empManager
+                },
+                (err) => {
+                    if (err) throw err;
+                });
+                    console.log("Successfully Added New Employee!");
+                    console.log("");
+                    viewAllEmployees();
+        });
+    });
+    });
+};
 
+function UpdateEmployeeRole() {
+    db.query("SELECT *FROM employee", (err, res) => {
+        if (err) throw err;
+        const pickEmployee = res.map((employee) => {
+            return {
+                value: employee.id,
+                name: employee.first_name + " " + employee.last_name,
+            };
+        });
+    db.query("SELECT * FROM role", (err, res) => {
+        if (err) throw err;
+        const pickRole = res.map((role) => {
+            return { 
+                value: role.id,
+                name: role.title,
+            };
+        });
+        inquirer.prompt([
+            {
+                type: "list",
+                message: "Select an employee to update a Role",
+                name: "UpdateEmployee",
+                choices: pickEmployee
+            },
+            {
+                type: "list",
+                message: "Select a New Role",
+                name: "updateRole",
+                choices: pickRole
+            }
+        ])
+        .then((res) => {
+            db.query("UPDATE employee SET role_id = ? WHERE id =?",
+            [
+                {
+                    role_id: res.updateRole,
+                },
+                {
+                    id: res.UpdateEmployee,
+                },
+            ],
+            (err) => {
+                if (err) throw err;
+            });
+                console.log("Successfully Updated  New Employee Role!");
+                console.log("");
+                viewAllRoles();
+        });
+    });
+    });
+};
     
