@@ -159,15 +159,15 @@ function addDepartment() {
         {
             type: "input",
             message: "please enter department name: ",
-            name: "department_name"
-            /*validate: nameInput => {
+            name: "department_name",
+            validate: nameInput => {
               if (nameInput) {
                   return true;
               }else {
                   console.log('please enter department name!');
                   return false;
               }
-            }*/
+            }
         },
     ]).then((res) => {
         db.query("INSERT INTO department SET ?",
@@ -177,7 +177,7 @@ function addDepartment() {
             (err) => {
                 if (err) throw err;
             });
-        console.log("Successfully Added New Department!");
+        console.log("Successfully Added New Department! = " + res.department_name);
         console.log("");
         viewAllDepartments();
     });
@@ -237,7 +237,7 @@ function addRole() {
                     (err) => {
                         if (err) throw err;
                     });
-                console.log("Successfully Added New Role!");
+                console.log("Successfully Added New Role! = " + res.role_title);
                 console.log("");
                 viewAllRoles();
             });
@@ -317,7 +317,7 @@ function addEmployee() {
                         (err) => {
                             if (err) throw err;
                         });
-                    console.log("Successfully Added New Employee!");
+                    console.log("Successfully Added New Employee! = " + res.firstName + " " + res.lastName);
                     console.log("");
                     viewAllEmployees();
                 });
@@ -394,25 +394,25 @@ function updateEmployeeManager() {
                     name: manager.first_name + " " + manager.last_name,
                 };
             });
-                pickManager.push({
-                                    name: "none",
-                                    value: null
-                });
-                inquirer.prompt ([
-                    {
-                        type: 'list',
-                        message: 'Select an employee to update manager',
-                        name: 'updateEmployee',
-                        choices: pickEmployee
-                    },
-                    {
-                        type: 'list',
-                        message: 'Select a new Manager',
-                        name: 'updateManager',
-                        choices: pickManager
-                    },                   
-                ])
-                  .then((res) => {
+            pickManager.push({
+                name: "none",
+                value: null
+            });
+            inquirer.prompt([
+                {
+                    type: 'list',
+                    message: 'Select an employee to update manager',
+                    name: 'updateEmployee',
+                    choices: pickEmployee
+                },
+                {
+                    type: 'list',
+                    message: 'Select a new Manager',
+                    name: 'updateManager',
+                    choices: pickManager
+                },
+            ])
+                .then((res) => {
                     console.log(res);
                     db.query("UPDATE employee SET manager_id = ? WHERE id =?",
                         [
@@ -426,7 +426,7 @@ function updateEmployeeManager() {
                     console.log("");
                     viewAllEmployees();
                 });
-    });
+        });
     });
 
 };
@@ -453,22 +453,23 @@ function ViewEmployeesByManager() {
                 choices: pickManager
             },
         ])
-            .then((res) => {
-                db.query("select employee.first_name,\
-                        employee.last_name,\
-                        role.title As job_title,\
-                        department.name As department_name,\
-                        employee.manager_id,\
-                        CONCAT(emp.first_name, ' ', emp.last_name) As Manager from employee \
-                        LEFT JOIN role on role.id = employee.role_id\
-                        LEFT JOIN department on department.id = role.department_id\
-                        LEFT JOIN employee As emp on employee.manager_id = ?",
-                    [res.manager], (err) => {
+            .then((res1) => {
+                db.query("select emp.first_name,\
+                            emp.last_name,\
+                            role.title as job_title,\
+                            dept.name as department_name,\
+                            concat(mgr.first_name, ' ', mgr.last_name) as manager_name \
+                    from employee emp \
+                    left join role as role on role.id = emp.role_id \
+                    left join department as dept on dept.id = role.department_id \
+                    left join employee as mgr on mgr.id = emp.manager_id \
+                    where emp.manager_id = ?",
+                    [res1.manager], (err, res1) => {
                         if (err) throw err;
+                        console.log("");
+                        console.table(res1);
+                        empPrompts();
                     });
-                console.table(res);
-                empPrompts();
-
             });
     });
 };
@@ -497,15 +498,16 @@ function ViewEmployeesByDepartment() {
                          employee.last_name,\
                          role.title As job_title,\
                          department.name As department_name,\
-                         CONCAT(emp.first_name, " ", emp.last_name) As Manager FROM employee\
+                         CONCAT(emp.first_name, " ", emp.last_name) as Manager FROM employee\
                          LEFT JOIN role ON role.id = employee.role_id\
                          LEFT JOIN department on department.id = role.department_id\
                          LEFT JOIN employee As emp on employee.manager_id = emp.id WHERE department.id = ?`,
-                    res.department, (err, res) => {
+                    [res.department], (err, res) => {
                         if (err) throw err;
+                        console.log("");
+                        console.table(res);
+                        empPrompts();
                     });
-                console.table(res);
-                empPrompts();
 
             });
     });
@@ -532,7 +534,7 @@ function ViewBudgetByDepartment() {
         ])
             .then((res) => {
                 db.query("SELECT  department.name AS department_name,\
-                    SUM(role.salary) AS BUDGET\
+                    SUM(role.salary) AS TOTAL_BUDGET\
                     FROM (role INNER JOIN department ON role.department_id = department.id)\
                     INNER JOIN employee ON role.id = employee.role_id\
                     WHERE department.id = ?\
@@ -565,14 +567,13 @@ function removeDepartment() {
             }
         ])
             .then((res) => {
-                //console.log(department);
-                //console.log(department.delDept);
+
                 db.query("DELETE FROM department WHERE id = ?",
                     res.delDept, (err, res) => {
                         if (err) throw err;
-                       // console.table(res);
-                       console.log("Successfully Deleted choosen Department!");
-                         console.log("");
+                        // console.table(res);
+                        console.log("Successfully Deleted choosen Department! = " + res.delDept);
+                        console.log("");
                         viewAllDepartments();
                     });
             });
@@ -589,7 +590,7 @@ function removeRole() {
                 name: toDeleteRole.title,
             };
         });
-        inquirer.prompt ([
+        inquirer.prompt([
             {
                 type: "list",
                 message: "Select a Role to Delete",
@@ -597,46 +598,45 @@ function removeRole() {
                 choices: deleteRole,
             },
         ])
-        .then((res) => {
-            db.query("DELETE FROM role WHERE id = ?",
-                res.delRole, (err, res) => {
-                    if (err) throw err;
-                   console.log("Successfully Deleted  Role!");
-                   console.log("Deleted Role: " + res.delRole );
-                     console.log("");
-                    viewAllRoles();
-                });
-        });
+            .then((res) => {
+                db.query("DELETE FROM role WHERE id = ?",
+                    res.delRole, (err, res) => {
+                        if (err) throw err;
+                        console.log("Successfully Deleted  Role!");
+                        console.log("Deleted Role: " + res.delRole);
+                        console.log("");
+                        viewAllRoles();
+                    });
+            });
     });
 };
 
 //Delete Employee
 function removeEmployee() {
-    db.query("SELECT * FROM employee", (err, res) => 
-    {
+    db.query("SELECT * FROM employee", (err, res) => {
         if (err) throw err;
         const delEmployee = res.map((toDelEmp) => {
-           return{
-                    value: toDelEmp.id,
-                    name: toDelEmp.first_name + ' ' + toDelEmp.last_name,
+            return {
+                value: toDelEmp.id,
+                name: toDelEmp.first_name + ' ' + toDelEmp.last_name,
             };
         })
-            inquirer.prompt ([
-                {
-                    type: 'list',
-                    message: "Select an Employee to Delete",
-                    name: "delEmp",
-                    choices: delEmployee 
-                },
-            ])
-              .then((res) => {
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: "Select an Employee to Delete",
+                name: "delEmp",
+                choices: delEmployee
+            },
+        ])
+            .then((res) => {
                 db.query("DELETE FROM employee where id = ?",
-                        res.delEmp, (err, res) => {
-                            if(err) throw err;
-                            console.log("Successfully Deleted  Employee!");
-                            console.log("");
-                           viewAllEmployees();
-                        });
-              });
+                    res.delEmp, (err, res) => {
+                        if (err) throw err;
+                        console.log("Successfully Deleted  Employee!");
+                        console.log("");
+                        viewAllEmployees();
+                    });
+            });
     });
 };
