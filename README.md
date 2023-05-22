@@ -91,11 +91,13 @@ npm test
 (./assets/12-sql-homework-demo-01.png)
 
 ## ScreenShot
-![Employee Tracker]()
+![Employee Tracker](assets/mysql-screenshot2.png)
+(assets/mysql-screenshot1.png)
+
 
 ## URL
 1. Walkthrough video of Employee Tracker.
-
+  https://drive.google.com/file/d/1zsD5mu9-krBoJfFq4keJWsrPghi1w0DQ/view?usp=share_link
 
 2. The URL of the GitHub repository.
   https://github.com/shruthisalimath/Employee-Management
