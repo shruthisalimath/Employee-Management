@@ -459,11 +459,11 @@ function ViewEmployeesByManager() {
                             role.title as job_title,\
                             dept.name as department_name,\
                             concat(mgr.first_name, ' ', mgr.last_name) as manager_name \
-                    from employee emp \
-                    left join role as role on role.id = emp.role_id \
-                    left join department as dept on dept.id = role.department_id \
-                    left join employee as mgr on mgr.id = emp.manager_id \
-                    where emp.manager_id = ?",
+                            from employee emp \
+                            left join role as role on role.id = emp.role_id \
+                            left join department as dept on dept.id = role.department_id \
+                            left join employee as mgr on mgr.id = emp.manager_id \
+                            where emp.manager_id = ?",
                     [res1.manager], (err, res1) => {
                         if (err) throw err;
                         console.log("");
