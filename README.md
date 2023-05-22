@@ -88,6 +88,7 @@ npm test
 
 ## Mock Up
 ![Employee Tracker](./assets/Mockup-Employee-tracker.png)
+(./assets/12-sql-homework-demo-01.png)
 
 ## ScreenShot
 ![Employee Tracker]()
