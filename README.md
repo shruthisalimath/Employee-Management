@@ -97,6 +97,7 @@ npm test
 
 
 2. The URL of the GitHub repository.
+  https://github.com/shruthisalimath/Employee-Management
 
 
 

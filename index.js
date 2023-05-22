@@ -554,10 +554,12 @@ function removeDepartment() {
         if (err) throw err;
         const deleteDept = res.map((toDeleteDept) => {
             return {
-                value: toDeleteDept.id,
                 name: toDeleteDept.name,
-            };
+                value: toDeleteDept.id
+                
+            }
         });
+        console.log(deleteDept);
         inquirer.prompt([
             {
                 type: "list",
@@ -566,17 +568,18 @@ function removeDepartment() {
                 choices: deleteDept,
             }
         ])
-            .then((res) => {
-
-                db.query("DELETE FROM department WHERE id = ?",
-                    res.delDept, (err, res) => {
-                        if (err) throw err;
-                        // console.table(res);
-                        console.log("Successfully Deleted choosen Department! = " + res.delDept);
-                        console.log("");
-                        viewAllDepartments();
-                    });
-            });
+        .then((res) => {
+            const delDeptInfo = res.delDept;
+            db.query("DELETE FROM department WHERE id = ?",
+                    delDeptInfo, (err) => {
+                    if (err) throw err;
+                    console.log("Successfully Deleted!");
+                    console.log("Deleted Department: " + delDeptInfo);
+                    console.log("");
+                    viewAllDepartments();
+                });
+        });
+            
     });
 };
 
@@ -599,11 +602,12 @@ function removeRole() {
             },
         ])
             .then((res) => {
+                const delRoleInfo = res.delRole;
                 db.query("DELETE FROM role WHERE id = ?",
-                    res.delRole, (err, res) => {
+                    delRoleInfo, (err) => {
                         if (err) throw err;
                         console.log("Successfully Deleted  Role!");
-                        console.log("Deleted Role: " + res.delRole);
+                        console.log("Deleted Role: " + delRoleInfo);
                         console.log("");
                         viewAllRoles();
                     });
@@ -630,10 +634,11 @@ function removeEmployee() {
             },
         ])
             .then((res) => {
+                const delEmpInfo = res.delEmp;
                 db.query("DELETE FROM employee where id = ?",
-                    res.delEmp, (err, res) => {
+                        delEmpInfo, (err) => {
                         if (err) throw err;
-                        console.log("Successfully Deleted  Employee!");
+                        console.log("Successfully Deleted  Employee! = " + delEmpInfo);
                         console.log("");
                         viewAllEmployees();
                     });
